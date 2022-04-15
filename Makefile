@@ -16,7 +16,6 @@ release:
 	git tag v$(VERSION)
 	git push origin v$(VERSION)
 
-
 gorelease:
 	rm -rf dist
 	goreleaser --debug
