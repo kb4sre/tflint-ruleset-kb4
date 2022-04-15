@@ -46,10 +46,10 @@ release:
     - curl https://gitlab.com/api/v4/projects/16573099/packages/generic/release-cli/v0.11.0/release-cli-linux-amd64 --output release-cli && chmod +x release-cli
     - |
       ./release-cli create --name "Release $(cat VERSION)" --tag-name $(cat VERSION) \
-        --assets-link "{\"name\":\"darwin_amd64\",\"url\":\"${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/tflint-ruleset-kb4/$(cat VERSION)/tflint-ruleset-kb4_darwin_amd64.zip\"}" \
-        --assets-link "{\"name\":\"darwin_arm64\",\"url\":\"${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/tflint-ruleset-kb4/$(cat VERSION)/tflint-ruleset-kb4_darwin_arm64.zip\"}" \
-        --assets-link "{\"name\":\"linux_amd64\",\"url\":\"${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/tflint-ruleset-kb4/$(cat VERSION)/tflint-ruleset-kb4_linux_amd64.zip\"}" \
-        --assets-link "{\"name\":\"linux_arm64\",\"url\":\"${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/tflint-ruleset-kb4/$(cat VERSION)/tflint-ruleset-kb4_linux_arm64.zip\"}" \
+        --assets-link "{\"name\":\"tflint-ruleset-kb4_darwin_amd64.zip\",\"url\":\"${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/tflint-ruleset-kb4/$(cat VERSION)/tflint-ruleset-kb4_darwin_amd64.zip\"}" \
+        --assets-link "{\"name\":\"tflint-ruleset-kb4_darwin_arm64.zip\",\"url\":\"${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/tflint-ruleset-kb4/$(cat VERSION)/tflint-ruleset-kb4_darwin_arm64.zip\"}" \
+        --assets-link "{\"name\":\"tflint-ruleset-kb4_linux_amd64.zip\",\"url\":\"${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/tflint-ruleset-kb4/$(cat VERSION)/tflint-ruleset-kb4_linux_amd64.zip\"}" \
+        --assets-link "{\"name\":\"tflint-ruleset-kb4_linux_arm64.zip\",\"url\":\"${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/tflint-ruleset-kb4/$(cat VERSION)/tflint-ruleset-kb4_linux_arm64.zip\"}" \
   dependencies:
     - upload
 

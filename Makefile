@@ -1,4 +1,6 @@
 VERSION := $(shell cat VERSION)
+GITLAB_TOKEN := USh-vxTV9MXHswbMU6m6
+
 
 default: build
 
@@ -15,3 +17,8 @@ install: build
 release:
 	git tag v$(VERSION)
 	git push origin v$(VERSION)
+
+
+gorelease:
+	rm -rf dist
+	GITLAB_TOKEN=$(GITLAB_TOKEN) goreleaser

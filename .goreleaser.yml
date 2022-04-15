@@ -1,22 +1,18 @@
-# This is an example goreleaser.yaml file with some sane defaults.
-# Make sure to check the documentation at http://goreleaser.com
-env:
-  - CGO_ENABLED=0
-builds:
-  - goos:
-      - linux
-      - darwin
-    goarch:
-      - amd64
-      - arm64
-archives:
-  - id: zip
-    name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
-    format: zip
-    files:
-      - none*
-# checksum:
-#   name_template: 'checksums.txt'
-# signs:
-#   - artifacts: checksum
-#     args: ["--batch", "-u", "{{ .Env.GPG_FINGERPRINT }}", "--output", "${signature}", "--detach-sign", "${artifact}"]
+# .goreleaser.yaml
+checksum:
+  # You can change the name of the checksums file.
+  # Default is `{{ .ProjectName }}_{{ .Version }}_checksums.txt`.
+  name_template: "checksums.txt"
+
+  # Algorithm to be used.
+  # Accepted options are sha256, sha512, sha1, crc32, md5, sha224 and sha384.
+  # Default is sha256.
+  algorithm: sha256
+
+  # IDs of artifacts to include in the checksums file.
+  # If left empty, all published binaries, archives, linux packages and source archives
+  # are included in the checksums file.
+  # Default is an empty list.
+  # ids:
+  #   - foo
+  #   - bar
