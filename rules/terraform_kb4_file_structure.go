@@ -9,7 +9,7 @@ import (
 	"github.com/terraform-linters/tflint-plugin-sdk/tflint"
 )
 
-var EXPECTED_FILES []string = []string{"_init.tf", "_variables.tf", "_outputs.tf"}
+var EXPECTED_FILES []string = []string{"_init.tf", "_variables.tf", "_outputs.tf", "_locals.tf"}
 
 // TerraformKb4FileStructureRule checks whether modules adhere to Terraform's standard module structure
 type TerraformKb4FileStructureRule struct {
@@ -48,6 +48,10 @@ func (r *TerraformKb4FileStructureRule) Check(runner tflint.Runner) error {
 	r.checkFiles(runner)
 	r.checkVariables(runner)
 	r.checkOutputs(runner)
+	r.checkProviders(runner)
+	r.checkTerraformBlock(runner)
+	r.checkLocals(runner)
+	r.checkTerraformRemoteState(runner)
 
 	return nil
 }
@@ -118,13 +122,125 @@ func (r *TerraformKb4FileStructureRule) checkOutputs(runner tflint.Runner) error
 		return err
 	}
 
-	for _, variable := range content.Blocks {
-		if variable.DefRange.Filename != "_outputs.tf" {
+	for _, output := range content.Blocks {
+		if output.DefRange.Filename != "_outputs.tf" {
 			runner.EmitIssue(
 				r,
-				fmt.Sprintf("variable %q should be moved from %s to %s", variable.Labels[0], variable.DefRange.Filename, "_outputs.tf"),
-				variable.DefRange,
+				fmt.Sprintf("output %q should be moved from %s to %s", output.Labels[0], output.DefRange.Filename, "_outputs.tf"),
+				output.DefRange,
 			)
+		}
+	}
+
+	return nil
+}
+
+func (r *TerraformKb4FileStructureRule) checkProviders(runner tflint.Runner) error {
+
+	content, err := runner.GetModuleContent(&hclext.BodySchema{
+		Blocks: []hclext.BlockSchema{
+			{
+				Type:       "provider",
+				LabelNames: []string{"name"},
+			},
+		},
+	}, nil)
+
+	if err != nil {
+		return err
+	}
+
+	for _, provider := range content.Blocks {
+		if provider.DefRange.Filename != "_init.tf" {
+			runner.EmitIssue(
+				r,
+				fmt.Sprintf("provider %q should be moved from %s to %s", provider.Labels[0], provider.DefRange.Filename, "_init.tf"),
+				provider.DefRange,
+			)
+		}
+	}
+
+	return nil
+}
+
+func (r *TerraformKb4FileStructureRule) checkTerraformBlock(runner tflint.Runner) error {
+
+	content, err := runner.GetModuleContent(&hclext.BodySchema{
+		Blocks: []hclext.BlockSchema{
+			{
+				Type:       "terraform",
+			},
+		},
+	}, nil)
+
+	if err != nil {
+		return err
+	}
+
+	for _, terraformBlock := range content.Blocks {
+		if terraformBlock.DefRange.Filename != "_init.tf" {
+			runner.EmitIssue(
+				r,
+				fmt.Sprintf("terraform block %q should be moved from %s to %s", terraformBlock.Labels[0], terraformBlock.DefRange.Filename, "_init.tf"),
+				terraformBlock.DefRange,
+			)
+		}
+	}
+
+	return nil
+}
+
+func (r *TerraformKb4FileStructureRule) checkLocals(runner tflint.Runner) error {
+
+	content, err := runner.GetModuleContent(&hclext.BodySchema{
+		Blocks: []hclext.BlockSchema{
+			{
+				Type:       "locals",
+			},
+		},
+	}, nil)
+
+	if err != nil {
+		return err
+	}
+
+	for _, locals := range content.Blocks {
+		if locals.DefRange.Filename != "_init.tf" {
+			runner.EmitIssue(
+				r,
+				fmt.Sprintf("locals block %q should be moved from %s to %s", locals.Labels[0], locals.DefRange.Filename, "_init.tf"),
+				locals.DefRange,
+			)
+		}
+	}
+
+	return nil
+}
+
+func (r *TerraformKb4FileStructureRule) checkTerraformRemoteState(runner tflint.Runner) error {
+
+	content, err := runner.GetModuleContent(&hclext.BodySchema{
+		Blocks: []hclext.BlockSchema{
+			{
+				Type:       "data",
+				LabelNames: []string{"name"},
+			},
+		},
+	}, nil)
+
+	if err != nil {
+		return err
+	}
+
+	for _, data := range content.Blocks {
+		if data.DefRange.Filename != "_init.tf" {
+			if data.Type == "terraform_remote_state" {
+				runner.EmitIssue(
+					r,
+					fmt.Sprintf("data terraform_remote_state %q should be moved from %s to %s", data.Name, data.DefRange.Filename, "_init.tf"),
+					data.DefRange,
+				)
+			}
 		}
 	}
 
