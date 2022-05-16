@@ -13,6 +13,12 @@ import (
  * For Modules
  *  - Resources should be named `this` where possible.
  *  - No providers in modules (this can be ignored on a module by module basis if needed)
+ * For all terraform
+ *  - The following checks need tests:
+ *    - checkProviders
+ *    - checkTerraformBlock
+ *    - checkLocals
+ *    - checkTerraformRemoteState
  */
 
 //go:embed VERSION
