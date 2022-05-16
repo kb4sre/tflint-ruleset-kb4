@@ -42,6 +42,14 @@ func Test_TerraformKb4ModuleStructureRule(t *testing.T) {
 						Start:    hcl.InitialPos,
 					},
 				},
+				{
+					Rule:    NewTerraformKb4FileStructureRule(),
+					Message: "Module should include a _locals.tf file.",
+					Range: hcl.Range{
+						Filename: "_locals.tf",
+						Start:    hcl.InitialPos,
+					},
+				},
 			},
 		},
 		{
@@ -50,6 +58,7 @@ func Test_TerraformKb4ModuleStructureRule(t *testing.T) {
 				"_init.tf":      `terraform {}`,
 				"_variables.tf": `variable "v" {}`,
 				// "_outputs.tf": `variable "v" {}`,
+				"_locals.tf": `locals {}`,
 			},
 			Expected: helper.Issues{
 				{
@@ -68,6 +77,7 @@ func Test_TerraformKb4ModuleStructureRule(t *testing.T) {
 				"_init.tf": `terraform {}`,
 				// "_variables.tf": `variable "some_variable" {}`,
 				"_outputs.tf": `output "some_output" {}`,
+				"_locals.tf": `locals {}`,
 			},
 			Expected: helper.Issues{
 				{
@@ -86,6 +96,7 @@ func Test_TerraformKb4ModuleStructureRule(t *testing.T) {
 				// "_init.tf": `terraform {}`,
 				"_variables.tf": `variable "some_variable" {}`,
 				"_outputs.tf":   `output "some_output" {}`,
+				"_locals.tf": `locals {}`,
 			},
 			Expected: helper.Issues{
 				{
@@ -99,11 +110,31 @@ func Test_TerraformKb4ModuleStructureRule(t *testing.T) {
 			},
 		},
 		{
+			Name: "missing locals file",
+			Content: map[string]string{
+				"_init.tf": `terraform {}`,
+				"_variables.tf": `variable "some_variable" {}`,
+				"_outputs.tf":   `output "some_output" {}`,
+				// "_locals.tf": `locals {}`,
+			},
+			Expected: helper.Issues{
+				{
+					Rule:    NewTerraformKb4FileStructureRule(),
+					Message: "Module should include a _locals.tf file.",
+					Range: hcl.Range{
+						Filename: filepath.Join("_locals.tf"),
+						Start:    hcl.InitialPos,
+					},
+				},
+			},
+		},
+		{
 			Name: "no missing files",
 			Content: map[string]string{
 				"_init.tf":      `terraform {}`,
 				"_variables.tf": `variable "some_variable" {}`,
 				"_outputs.tf":   `output "some_output" {}`,
+				"_locals.tf": `locals {}`,
 			},
 			Expected: helper.Issues{},
 		},
@@ -113,6 +144,7 @@ func Test_TerraformKb4ModuleStructureRule(t *testing.T) {
 				"_init.tf":      `variable "misplace_variable" {}`,
 				"_variables.tf": `variable "some_variable" {}`,
 				"_outputs.tf":   `output "some_output" {}`,
+				"_locals.tf": `locals {}`,
 			},
 			Expected: helper.Issues{
 				{
